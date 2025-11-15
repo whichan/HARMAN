@@ -10,13 +10,13 @@ module pwm_servomotor(
     
     //========== 1. 파라미터 정의 (100MHz 기준) ==========//
     // 20ms (50Hz) 주기: 100,000,000 * 0.02 = 2,000,000
-    parameter integer PERIOD = 2_000_000;
+    parameter PERIOD = 2_000_000;
     
     // 1ms (0도, 닫힘) 펄스 폭: 100,000,000 * 0.001 = 100,000
-    parameter integer DUTY_CLOSE_0DEG = 100_000;
+    parameter DUTY_CLOSE_0DEG = 100_000;
     
     // 2ms (180도, 열림) 펄스 폭: 100,000,000 * 0.002 = 200,000
-    parameter integer DUTY_OPEN_180DEG = 200_000;
+    parameter DUTY_OPEN_180DEG = 200_000;
     
     
     // ========== 2. btn rising edge 감지 ========== //
@@ -57,7 +57,6 @@ module pwm_servomotor(
         if(reset) begin
             period_counter <= 0;
         end else begin
-            // '매직 넘버' 대신 'PERIOD' 파라미터 사용
             if(period_counter == PERIOD - 1) begin
                 period_counter <= 0;
             end else begin

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module tick_generator # (
-    parameter INPUT_REQ = 100_000_000,   // 100MHz
+    parameter INPUT_FREQ = 100_000_000,   // 100MHz
     parameter TICK_Hz = 1000    // 1KHz  
 ) (
     input clk,
@@ -9,11 +9,11 @@ module tick_generator # (
     output reg tick
 );
 
-    parameter TICK_COUNT = INPUT_REQ / TICK_Hz;   // 100_000
+    parameter TICK_COUNT = INPUT_FREQ / TICK_Hz;   // 100_000
 
     reg [$clog2(TICK_COUNT)-1:0] r_tick_counter=0;  // 16bits 
 
-    always @(posedge clk, posedge reset) begin
+    always @(posedge clk) begin
         if (reset) begin
             r_tick_counter <=0; 
             tick <= 0;

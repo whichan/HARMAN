@@ -40,7 +40,7 @@ module data_sender(
     reg [3:0] r_char_index = 0; // 4비트면 0~15까지 가능
 
     // 5. FSM 로직
-    always @(posedge clk, posedge reset) begin
+    always @(posedge clk) begin
         if (reset) begin
             tx_start <= 0;
             r_char_index <= 0;

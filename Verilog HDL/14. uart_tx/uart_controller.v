@@ -15,7 +15,7 @@ module uart_controller(
     wire [7:0] w_tx_data;
 
     tick_generator # (
-        .INPUT_REQ(100_000_000),   // 100MHz
+        .INPUT_FREQ(100_000_000),   // 100MHz
         .TICK_Hz(1)    // 1Hz  
     ) u_tick_1Hz(
         .clk(clk),

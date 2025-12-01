@@ -82,7 +82,7 @@ module top(
         .cmd_type(w_cmd_type),       // 0: myname, 1: upcounter, 2: help
         .i_counter_val(w_cnt_val), // 16비트 카운터 값
 
-        .sender_busy(w_sender_busy),     // "나 전송 중이야" 플래그
+        .sender_busy(w_sender_busy),     //전송 중 플래그
     
     // UART TX Interface
         .tx_busy(w_tx_busy), // UART TX가 바쁜지 확인

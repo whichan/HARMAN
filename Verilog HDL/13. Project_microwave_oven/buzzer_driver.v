@@ -1,8 +1,5 @@
 `timescale 1ns / 1ps
 
-// 9-모듈 아키텍처의 7번: 부저 드라이버 ('근육')
-// '두뇌'로부터 1-pulse 'buzzer_on' 명령을 받아,
-// 100ms 동안 500Hz 톤을 생성합니다.
 module buzzer_driver(
     input clk,          // 100MHz 클럭
     input reset,        // Active-High 리셋

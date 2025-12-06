@@ -38,11 +38,13 @@ module btn_debounce(
     logic debounce;
 
     //8 SIPO(serial input parallel output) shift register
-    always_ff @(posedge r_clock_100khz or posedge reset) begin
+    always_ff @(posedge clk or posedge reset) begin
         if(reset) begin
             shift_reg <= 8'h00;
         end else begin
+            if(r_clock_100khz) begin
             shift_reg <= {i_btn, shift_reg[7:1]};
+            end
         end
     end
 

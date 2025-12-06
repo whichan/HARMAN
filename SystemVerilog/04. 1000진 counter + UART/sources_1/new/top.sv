@@ -3,6 +3,7 @@
 module top(
     input clk,
     input reset,
+    
     input clear,
     input run_stop,
     input mode,
@@ -21,11 +22,6 @@ module top(
     wire w_uart_clear, w_uart_run_stop, w_uart_mode;
     wire [7:0] w_rx_data;
     wire w_rx_done;
-
-
-    assign w_total_clear = (w_debounced_clear |  w_uart_clear);
-    assign w_total_run_stop = w_debounced_run_stop | w_uart_run_stop;
-    assign w_total_mode = w_debounced_mode | w_uart_mode;
 
     uart_top u_uart_top(
         .clk(clk),
@@ -74,6 +70,10 @@ module top(
         .i_btn(mode),
         .o_btn(w_debounced_mode)
     );
+
+    assign w_total_clear = w_debounced_clear |  w_uart_clear;
+    assign w_total_run_stop = w_debounced_run_stop | w_uart_run_stop;
+    assign w_total_mode = w_debounced_mode | w_uart_mode;
 
     top_10000_counter u_top_10000_counter(
         .clk(clk),

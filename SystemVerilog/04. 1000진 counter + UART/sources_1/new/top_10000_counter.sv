@@ -7,12 +7,17 @@ module top_10000_counter(
     input mode,
     input run_stop,
     output [3:0] fnd_com,
-    output [7:0] fnd_data
+    output [7:0] fnd_data,
+
+    //status용 추가
+    output [13:0] current_count,
+    output current_mode
     );
 
     wire [13:0] w_counter;
 
-    
+    assign current_count = w_counter;
+    assign current_mode = mode;
 
     datapath_counter u_datapath_counter(
         .clk(clk),

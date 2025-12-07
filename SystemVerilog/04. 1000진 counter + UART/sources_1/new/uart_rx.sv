@@ -18,7 +18,7 @@ module uart_rx #(
     
     parameter integer DIVIDER_COUNT = 100_000_000 / (BPS * 16);
 
-    reg [1:0] r_state;     // state: IDLE START_BIT DATA_BITS STOP_BIT
+    reg [1:0] r_state;     // state: IDLE, START_BIT, DATA_BITS, STOP_BIT
     reg [3:0] r_bit_cnt;   // r_data_reg에 들어갈 index값
     reg [7:0] r_data_reg;  //rx포트로 부터 들어온 bit를 담을 그릇
     reg [15:0] r_baud_cnt; // 651ns : 9600x16 오버샘플링(16) count변수

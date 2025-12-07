@@ -52,24 +52,28 @@ module tb_top();
         #100
         reset=0;
 
-        // ===== 1. 'r'전송: up count start ===== //
+        // ===== 1. 'r'전송: down count start ===== //
         send_uart_byte("r");
-        #(WAIT_COUNT);
+        #(WAIT_COUNT+WAIT_COUNT/3);
 
-        // ===== 2. 'm'전송: down count start ===== //
+        // ===== 2. 'm'전송: up count start ===== //
         send_uart_byte("m");
-        #(WAIT_COUNT);
+        #(WAIT_COUNT+WAIT_COUNT/4);
 
         // ===== 3. 'r' 전송: stop ===== //
         send_uart_byte("r");
-        #(WAIT_COUNT);
+        #(WAIT_COUNT+WAIT_COUNT/2);
 
-        // ===== 4. 'r' 전송: 다시 down count start ===== //
+        // ===== 4. 'r' 전송: 다시 up count start ===== //
         send_uart_byte("r");
-        #(WAIT_COUNT);
+        #(WAIT_COUNT+WAIT_COUNT/5);
 
         // ===== 5. 'c' 전송 ===== //
         send_uart_byte("c");
+        #(WAIT_COUNT);
+
+        // ===== 6. 's' 전송 ===== //
+        send_uart_byte("s");
         #(WAIT_COUNT);
         #50_000_000
 

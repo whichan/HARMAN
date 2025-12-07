@@ -49,7 +49,6 @@ wire w_tick;
         .digit_10(w_digit_10),
         .digit_100(w_digit_100),
         .digit_1000(w_digit_1000),
-
         . bcd(w_bcd)
     );
 

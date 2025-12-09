@@ -56,6 +56,9 @@ module tb_top();
         send_uart_byte("r");
         #(WAIT_COUNT+WAIT_COUNT/3);
 
+        send_uart_byte("s");
+        #(WAIT_COUNT);
+
         // ===== 2. 'm'전송: up count start ===== //
         send_uart_byte("m");
         #(WAIT_COUNT+WAIT_COUNT/4);

@@ -29,6 +29,7 @@ module top(
     wire w_tx_busy;
     wire w_tx_done;
 
+
     wire [13:0] w_current_count;
     wire w_current_mode;
     wire w_send_trigger;
@@ -68,6 +69,7 @@ module top(
         .current_cnt(w_current_count),  // 0~9999
         .current_mode(w_current_mode), // 0: down, 1: up
         .tx_done(w_tx_done),
+        .tx_busy(w_tx_busy),
     
         .tx_start(w_tx_start),
         .tx_data(w_tx_data),

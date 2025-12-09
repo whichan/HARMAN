@@ -1,302 +1,162 @@
-/*`timescale 1ns / 1ps
-
-module data_sender(
-    input clk,
-    input reset,
-    input start_trigger,
-    input [13:0] current_cnt,  // 0~9999
-    input current_mode,        // 0: down, 1: up
-    input tx_done,
-    
-    output logic tx_start,
-    output logic [7:0] tx_data,
-    output logic busy
-);
-
-    localparam S_IDLE = 0, S_LATCH = 1, S_SEND = 2, S_WAIT = 3;
-    reg [1:0] state;
-    reg [4:0] char_idx;
-    
-    reg [13:0] latched_cnt;
-    reg latched_mode;
-    
-    // BCD 변환된 각 자리수
-    reg [3:0] digit_1000, digit_100, digit_10, digit_1;
-    
-    // 전송할 마지막 문자 인덱스 (총 문자수 - 1)
-    reg [4:0] last_char_idx; 
-    
-    // 10진수 -> ASCII 변환 함수
-    function [7:0] digit2ascii;
-        input [3:0] val;
-        begin
-            digit2ascii = val + 8'd48;  // '0' = 48
-        end
-    endfunction
-    
-    // Combinational Logic: BCD 변환 및 길이 계산
-    always @(*) begin
-        // 1. 카운터 값을 각 자릿수로 분리 (0~9)
-        digit_1000 = latched_cnt / 1000;
-        digit_100  = (latched_cnt % 1000) / 100;
-        digit_10   = (latched_cnt % 100) / 10;
-        digit_1    = latched_cnt % 10;
-        
-        // 2. 모드에 따른 전송 길이 설정 (마지막 인덱스 번호)
-        // "count: 1234, mode: up\r\n"   -> 인덱스 0~22 (총 23자)
-        // "count: 1234, mode: down\r\n" -> 인덱스 0~24 (총 25자)
-        last_char_idx = latched_mode ? 5'd22 : 5'd24;
-    end
-    
-    // Sequential Logic: FSM
-    always @(posedge clk) begin
-        if (reset) begin
-            state <= S_IDLE;
-            tx_start <= 0;
-            busy <= 0;
-            char_idx <= 0;
-            latched_cnt <= 0;
-            latched_mode <= 0;
-            tx_data <= 0;
-        end else begin
-            tx_start <= 0;  // Pulse 생성을 위한 자동 Clear
-            
-            case (state)
-                S_IDLE: begin
-                    busy <= 0;
-                    char_idx <= 0;
-                    if (start_trigger) begin
-                        state <= S_LATCH;
-                        busy <= 1;
-                    end
-                end
-                
-                S_LATCH: begin
-                    latched_cnt <= current_cnt;
-                    latched_mode <= current_mode;
-                    char_idx <= 0;
-                    state <= S_SEND;
-                end
-                
-                S_SEND: begin
-                    // 문자열 조립: "count: 1234, mode: up" or "down"
-                    case (char_idx)
-                        // "count: "
-                        5'd0:  tx_data <= "c";
-                        5'd1:  tx_data <= "o";
-                        5'd2:  tx_data <= "u";
-                        5'd3:  tx_data <= "n";
-                        5'd4:  tx_data <= "t";
-                        5'd5:  tx_data <= ":";
-                        5'd6:  tx_data <= " ";
-                        
-                        // "1234" (가변 데이터)
-                        5'd7:  tx_data <= digit2ascii(digit_1000);
-                        5'd8:  tx_data <= digit2ascii(digit_100);
-                        5'd9:  tx_data <= digit2ascii(digit_10);
-                        5'd10: tx_data <= digit2ascii(digit_1);
-                        
-                        // ", mode: "
-                        5'd11: tx_data <= ",";
-                        5'd12: tx_data <= " ";
-                        5'd13: tx_data <= "m";
-                        5'd14: tx_data <= "o";
-                        5'd15: tx_data <= "d";
-                        5'd16: tx_data <= "e";
-                        5'd17: tx_data <= ":";
-                        5'd18: tx_data <= " ";
-                        
-                        // "up" or "down" 분기 처리
-                        5'd19: tx_data <= latched_mode ? "u" : "d";
-                        5'd20: tx_data <= latched_mode ? "p" : "o";
-                        
-                        // up인 경우 여기서 끝(\r), down인 경우 계속('w')
-                        5'd21: tx_data <= latched_mode ? 8'h0D : "w"; // \r or 'w'
-                        
-                        // up인 경우 여기서 진짜 끝(\n), down인 경우 계속('n')
-                        5'd22: tx_data <= latched_mode ? 8'h0A : "n"; // \n or 'n'
-                        
-                        // down인 경우 마무리 (\r\n)
-                        5'd23: tx_data <= 8'h0D; // \r
-                        5'd24: tx_data <= 8'h0A; // \n
-                        
-                        default: tx_data <= " ";
-                    endcase
-                    
-                    tx_start <= 1;  // 전송 시작 트리거
-                    state <= S_WAIT;
-                end
-                
-                S_WAIT: begin
-                    // UART TX 모듈이 전송을 마칠 때까지 대기
-                    if (tx_done) begin
-                        if (char_idx == last_char_idx) begin
-                            // 마지막 글자까지 다 보냈으면 종료
-                            state <= S_IDLE;
-                            busy <= 0;
-                        end else begin
-                            // 다음 글자 보내러 이동
-                            char_idx <= char_idx + 1;
-                            state <= S_SEND;
-                        end
-                    end
-                end
-                
-                default: state <= S_IDLE;
-            endcase
-        end
-    end
-
-endmodule*/
-
 `timescale 1ns / 1ps
 
 module data_sender(
-    input clk,
-    input reset,
-    input start_trigger,
-    input [13:0] current_cnt,  // 0~9999
-    input current_mode,        // 0: down, 1: up
-    input tx_done,
+    input wire clk,
+    input wire reset,
     
-    output logic tx_start,
-    output logic [7:0] tx_data,
-    output logic busy
-);
-
-    localparam S_IDLE = 0, S_LATCH = 1, S_SEND = 2, S_WAIT = 3;
-    reg [1:0] state;
-    reg [4:0] char_idx;
+    input wire start_trigger,      // 's' 키가 눌렸을 때 들어오는 1-cycle 펄스
+    input wire [13:0] current_cnt, // 0 ~ 9999 (14비트 이진수)
+    input wire current_mode,       // 0: Down, 1: Up
     
-    // 내부 저장소 (Latch)
-    reg [13:0] latched_cnt;
-    reg latched_mode;
+    input wire tx_done,            // uart_tx가 한 바이트 전송을 마쳤다는 신호
+    input wire tx_busy,            // uart_tx가 전송 중인지 여부
     
-    // BCD 변환 결과를 받을 wire
-    wire [15:0] w_bcd_result;
-    
-    // 각 자리수 분리용
-    reg [3:0] digit_1000, digit_100, digit_10, digit_1;
-    
-    // 전송할 마지막 문자 인덱스
-    reg [4:0] last_char_idx; 
-
-
-    bin_to_bcd u_bin_to_bcd (
-        .bin(latched_cnt),  // Latch된 카운터 값을 입력으로 줌
-        .bcd(w_bcd_result)  // 변환된 10진수 결과를 받음
+    output reg tx_start,           // uart_tx에게 전송 시작 명령
+    output reg [7:0] tx_data,      // uart_tx에게 보낼 1바이트 데이터
+    output wire busy               // 현재 문자열 패킷을 보내는 중 (외부 알림용)
     );
 
-    // 10진수 -> ASCII 변환 함수
-    function [7:0] digit2ascii;
-        input [3:0] val;
-        begin
-            digit2ascii = val + 8'd48;  // '0' = 48
-        end
-    endfunction
+    // =========================================================================
+    // 1. 상태 머신 정의
+    // =========================================================================
+    localparam S_IDLE       = 3'd0;
+    localparam S_PREPARE    = 3'd1; // 이진수를 십진수 자리수로 변환하는 단계
+    localparam S_LOAD_DATA  = 3'd2; // 보낼 문자를 결정하는 단계
+    localparam S_SEND_START = 3'd3; // tx_start 신호를 켜는 단계
+    localparam S_WAIT_DONE  = 3'd4; // 전송 완료(tx_done)를 기다리는 단계
+    localparam S_CHECK_NEXT = 3'd5; // 다음 문자가 있는지 확인하는 단계
+
+    reg [2:0] state;
+    reg [4:0] char_idx; // 보낼 문자열 인덱스 (최대 32글자까지 커버)
+
+    // =========================================================================
+    // 2. Binary to BCD 변환용 레지스터
+    // =========================================================================
+    // current_cnt(이진수)를 천, 백, 십, 일의 자리 숫자로 쪼개서 저장
+    reg [3:0] digit_th; // 천의 자리
+    reg [3:0] digit_hu; // 백의 자리
+    reg [3:0] digit_te; // 십의 자리
+    reg [3:0] digit_on; // 일의 자리
     
-    // Combinational Logic
-    always @(*) begin
-        // 1. 모듈에서 변환된 BCD 값을 자릿수별로 쪼개기
-        digit_1000 = w_bcd_result[15:12]; // 천
-        digit_100  = w_bcd_result[11:8];  // 백
-        digit_10   = w_bcd_result[7:4];   // 십
-        digit_1    = w_bcd_result[3:0];   // 일
-        
-        // 2. 모드에 따른 전송 길이 설정
-        // Up: 23글자 (idx 22), Down: 25글자 (idx 24)
-        last_char_idx = latched_mode ? 5'd22 : 5'd24;
-    end
-    
-    // FSM Logic
+    // 모드 저장용 (전송 도중에 모드가 바뀌면 안 되므로 캡처)
+    reg saved_mode; 
+
+    // busy 신호: IDLE 상태가 아니면 busy임
+    assign busy = (state != S_IDLE);
+
+    // =========================================================================
+    // 3. 메인 동작 로직
+    // =========================================================================
     always @(posedge clk) begin
         if (reset) begin
             state <= S_IDLE;
-            tx_start <= 0;
-            busy <= 0;
-            char_idx <= 0;
-            latched_cnt <= 0;
-            latched_mode <= 0;
-            tx_data <= 0;
+            tx_start <= 1'b0;
+            tx_data <= 8'b0;
+            char_idx <= 5'd0;
+            digit_th <= 0; digit_hu <= 0; digit_te <= 0; digit_on <= 0;
+            saved_mode <= 0;
         end else begin
-            tx_start <= 0;  // Pulse 자동 Clear
-            
             case (state)
+                // -------------------------------------------------------------
+                // 대기 상태
+                // -------------------------------------------------------------
                 S_IDLE: begin
-                    busy <= 0;
-                    char_idx <= 0;
+                    tx_start <= 1'b0;
+                    char_idx <= 5'd0;
+                    
                     if (start_trigger) begin
-                        state <= S_LATCH;
-                        busy <= 1;
+                        state <= S_PREPARE;
+                        saved_mode <= current_mode; // 현재 모드 캡처
                     end
                 end
-                
-                S_LATCH: begin
-                    // 값 캡쳐 (Snapshot)
-                    latched_cnt <= current_cnt;
-                    latched_mode <= current_mode;
-                    char_idx <= 0;
-                    state <= S_SEND;
+
+                // -------------------------------------------------------------
+                // 데이터 준비 (Binary -> BCD 변환)
+                // -------------------------------------------------------------
+                S_PREPARE: begin
+                    // 간단한 수식 사용 (합성 툴이 알아서 최적화해줍니다)
+                    // 14비트 숫자는 작아서 나눗셈 연산 비용이 크지 않습니다.
+                    digit_th <= (current_cnt / 1000) % 10;
+                    digit_hu <= (current_cnt / 100) % 10;
+                    digit_te <= (current_cnt / 10) % 10;
+                    digit_on <= current_cnt % 10;
+                    
+                    state <= S_LOAD_DATA;
                 end
-                
-                S_SEND: begin
-                    // 문자열 조립
+
+                // -------------------------------------------------------------
+                // 전송할 문자 로드 (Lookup Table)
+                // "count:1234, mode: UP\r\n" 형식
+                // -------------------------------------------------------------
+                S_LOAD_DATA: begin
                     case (char_idx)
-                        // "count: "
-                        5'd0:  tx_data <= "c";
-                        5'd1:  tx_data <= "o";
-                        5'd2:  tx_data <= "u";
-                        5'd3:  tx_data <= "n";
-                        5'd4:  tx_data <= "t";
-                        5'd5:  tx_data <= ":";
-                        5'd6:  tx_data <= " ";
-                        
-                        // "1234" (변환된 숫자)
-                        5'd7:  tx_data <= digit2ascii(digit_1000);
-                        5'd8:  tx_data <= digit2ascii(digit_100);
-                        5'd9:  tx_data <= digit2ascii(digit_10);
-                        5'd10: tx_data <= digit2ascii(digit_1);
-                        
+                        // "count:"
+                        0: tx_data <= "c";
+                        1: tx_data <= "o";
+                        2: tx_data <= "u";
+                        3: tx_data <= "n";
+                        4: tx_data <= "t";
+                        5: tx_data <= ":";
+                        // 숫자 (BCD + '0' -> ASCII)
+                        6: tx_data <= {4'b0011, digit_th}; 
+                        7: tx_data <= {4'b0011, digit_hu};
+                        8: tx_data <= {4'b0011, digit_te};
+                        9: tx_data <= {4'b0011, digit_on};
                         // ", mode: "
-                        5'd11: tx_data <= ",";
-                        5'd12: tx_data <= " ";
-                        5'd13: tx_data <= "m";
-                        5'd14: tx_data <= "o";
-                        5'd15: tx_data <= "d";
-                        5'd16: tx_data <= "e";
-                        5'd17: tx_data <= ":";
-                        5'd18: tx_data <= " ";
-                        
-                        // "up" or "down"
-                        5'd19: tx_data <= latched_mode ? "u" : "d";
-                        5'd20: tx_data <= latched_mode ? "p" : "o";
-                        
-                        // 가변 길이 처리 부분
-                        5'd21: tx_data <= latched_mode ? 8'h0D : "w"; // \r or 'w'
-                        5'd22: tx_data <= latched_mode ? 8'h0A : "n"; // \n or 'n'
-                        5'd23: tx_data <= 8'h0D; // \r (down only)
-                        5'd24: tx_data <= 8'h0A; // \n (down only)
-                        
+                        10: tx_data <= ",";
+                        11: tx_data <= " ";
+                        12: tx_data <= "m";
+                        13: tx_data <= "o";
+                        14: tx_data <= "d";
+                        15: tx_data <= "e";
+                        16: tx_data <= ":";
+                        17: tx_data <= " ";
+                        // UP / DN
+                        18: tx_data <= saved_mode ? "U" : "D";
+                        19: tx_data <= saved_mode ? "P" : "N"; // UP or DN
+                        // 줄바꿈 (Carriage Return + Line Feed)
+                        20: tx_data <= 8'h0D; // \r
+                        21: tx_data <= 8'h0A; // \n
                         default: tx_data <= " ";
                     endcase
-                    
-                    tx_start <= 1;  // 전송 시작
-                    state <= S_WAIT;
+                    state <= S_SEND_START;
                 end
-                
-                S_WAIT: begin
-                    if (tx_done) begin
-                        if (char_idx == last_char_idx) begin
-                            state <= S_IDLE; // 끝
-                            busy <= 0;
-                        end else begin
-                            char_idx <= char_idx + 1; // 다음 글자
-                            state <= S_SEND;
-                        end
+
+                // -------------------------------------------------------------
+                // 전송 시작 신호 (1 클럭 펄스)
+                // -------------------------------------------------------------
+                S_SEND_START: begin
+                    // 혹시 uart_tx가 이전 전송 때문에 아직 바쁘다면 대기
+                    if (!tx_busy) begin
+                        tx_start <= 1'b1;
+                        state <= S_WAIT_DONE;
                     end
                 end
-                
-                default: state <= S_IDLE;
+
+                // -------------------------------------------------------------
+                // 전송 완료 대기
+                // -------------------------------------------------------------
+                S_WAIT_DONE: begin
+                    tx_start <= 1'b0; // 펄스는 바로 내려줍니다.
+                    
+                    // tx_done이 뜰 때까지 기다림
+                    if (tx_done) begin
+                        state <= S_CHECK_NEXT;
+                    end
+                end
+
+                // -------------------------------------------------------------
+                // 다음 문자 확인
+                // -------------------------------------------------------------
+                S_CHECK_NEXT: begin
+                    // 총 22글자 (인덱스 0~21)
+                    if (char_idx == 21) begin
+                        state <= S_IDLE; // 끝났으면 초기 상태로
+                    end else begin
+                        char_idx <= char_idx + 1; // 인덱스 증가
+                        state <= S_LOAD_DATA;     // 다음 글자 가지러 감
+                    end
+                end
             endcase
         end
     end

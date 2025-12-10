@@ -9,6 +9,7 @@ module uart_top(
     input tx_start,
     output RsTx,
     output tx_busy,
+    output tx_done,
 
     //rx
     output [7:0] data_out,

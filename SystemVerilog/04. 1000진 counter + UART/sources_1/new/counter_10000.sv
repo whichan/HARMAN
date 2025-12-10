@@ -8,12 +8,11 @@ module counter_10000(
     input tick_10khz, 
     input mode,
     
-    output reg [$clog2(10000)-1:0] count
+    output reg [13:0] count
     );
     
     parameter MAX_CNT = 10_000;
     
-    // [중요] 하나의 always 블록 안에서 모든 상황을 제어해야 합니다.
     always @(posedge clk or posedge reset) begin
         if(reset) begin
             count <= 9998;

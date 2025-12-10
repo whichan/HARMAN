@@ -20,19 +20,30 @@ module top(
 
     wire w_total_clear, w_total_run_stop, w_total_mode;
     wire w_uart_clear, w_uart_run_stop, w_uart_mode;
+
+    //uart
     wire [7:0] w_rx_data;
     wire w_rx_done;
+    wire [7:0] w_tx_data;
+    wire w_tx_start;
+    wire w_tx_busy;
+    wire w_tx_done;
+
+
+    wire [13:0] w_current_count;
+    wire w_current_mode;
+    wire w_send_trigger;
 
     uart_top u_uart_top(
         .clk(clk),
         .reset(reset),
 
     //tx
-        .tx_data(),
-        .tx_start(),
-        .RsTx(),
-        .tx_busy(),
-
+        .tx_data(w_tx_data),
+        .tx_start(w_tx_start),
+        .RsTx(RsTx),
+        .tx_busy(w_tx_busy),
+        .tx_done(w_tx_done),
     //rx
         .data_out(w_rx_data),
         .rx_done(w_rx_done),
@@ -47,7 +58,22 @@ module top(
     
         .uart_run_stop(w_uart_run_stop),
         .uart_clear(w_uart_clear),
-        .uart_mode(w_uart_mode)
+        .uart_mode(w_uart_mode),
+        .uart_status(w_send_trigger)
+    );
+
+    data_sender u_data_sender(
+        .clk(clk),
+        .reset(reset),
+        .start_trigger(w_send_trigger),
+        .current_cnt(w_current_count),  // 0~9999
+        .current_mode(w_current_mode), // 0: down, 1: up
+        .tx_done(w_tx_done),
+        .tx_busy(w_tx_busy),
+    
+        .tx_start(w_tx_start),
+        .tx_data(w_tx_data),
+        .busy()
     );
 
     btn_debounce u_btn_clear(
@@ -82,7 +108,9 @@ module top(
         .run_stop(w_run_stop),
         .mode(w_mode),
         .fnd_data(fnd_data),
-        .fnd_com(fnd_com)
+        .fnd_com(fnd_com),
+        .current_count(w_current_count),
+        .current_mode(w_current_mode)
     );
 
     command_controller u_command_controller(

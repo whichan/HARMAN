@@ -80,11 +80,10 @@ module tb_fifo ();
         end
 
         #30
-        wr=1'b1;
-        rd=1'b1;
         for(i=0; i<100; i++) begin
             stimulus_generate();
             wdata=stimulus_data;
+            {wr,rd}=$random();
             @(posedge clk);
             #10;
         end

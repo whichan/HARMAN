@@ -70,7 +70,7 @@ module tb_fifo ();
         #10;
         wr = 1;
         rd = 1;
-        for (i = 0; i < 256; i = i + 1) begin
+        for (i = 0; i < 10; i = i + 1) begin
             wdata = i + 8'h10;
             if (u_fifo.u_register_file.register_file[0] == 2) begin
                 $display("test %x", u_fifo.u_register_file.register_file[0]);
@@ -80,13 +80,12 @@ module tb_fifo ();
         end
 
         #30
-        wr=1'b1;
-        rd=1'b1;
         for(i=0; i<100; i++) begin
             stimulus_generate();
             wdata=stimulus_data;
+            {wr,rd}=$random();
             @(posedge clk);
-            #1;
+            #10;
         end
         
         wr=0;
@@ -99,7 +98,5 @@ module tb_fifo ();
     task stimulus_generate();
         stimulus_data = $random()%256;
     endtask
-
-    
 
 endmodule

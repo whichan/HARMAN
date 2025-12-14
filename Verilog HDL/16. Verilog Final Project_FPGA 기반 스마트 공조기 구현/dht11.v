@@ -81,6 +81,23 @@ module dht11(
             r_state <= S_IDLE;
             prev_dht11_data <= 1;
         end else begin 
+
+            // IDLE 상태가 아닐 때(동작 중일 때) 계속 시간을 잰다
+            if (r_state != S_IDLE) begin
+                if (us_1us_clk) begin
+                    // 30ms(30,000us)가 넘어가면 강제 리셋 (Deadlock 탈출)
+                    if (timeout_timer > TIMEOUT_LIMIT) begin
+                        r_state <= S_IDLE;
+                        error_flag <= 1; // 에러임을 알림
+                        timeout_timer <= 0;
+                    end else begin
+                        timeout_timer <= timeout_timer + 1;
+                    end
+                end
+            end else begin
+                timeout_timer <= 0; // IDLE일 때는 0으로 대기
+            end
+
             case (r_state) 
             // 1. 대기 상태
             S_IDLE : begin

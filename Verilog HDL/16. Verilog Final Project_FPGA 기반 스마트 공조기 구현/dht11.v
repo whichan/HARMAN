@@ -31,7 +31,8 @@ module dht11(
     parameter WAIT_RESPONSE_HIGH = 3'b100;
     parameter READ_DATA = 3'b101;
     parameter DONE = 3'b110;
-
+    parameter TIMEOUT_LIMIT = 30_000;
+    
     // 내부 레지스터 선언
     reg [6:0] us_cnt;       // 1us를 만들기 위한 작은 카운터 (0~99)
     reg us_1us_clk;         // 1us마다 딱 1클럭 동안만 '1'이 되는 틱 신호
@@ -44,6 +45,8 @@ module dht11(
     reg [5:0] bit_cnt;         // 몇 번째 비트를 읽고 있는지 카운트 (0~39)
 
     reg prev_dht11_data;       // 엣지 감지를 위해 '이전 상태'를 저장하는 변수
+
+    reg [15:0] timeout_timer;
 
     // 시스템 클럭(100MHz)을 세어서 1us마다 한 번씩 신호를 줍니다.
     always @(posedge clk or posedge reset) begin

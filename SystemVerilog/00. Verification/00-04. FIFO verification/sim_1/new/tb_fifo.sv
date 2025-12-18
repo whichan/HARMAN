@@ -91,7 +91,7 @@ class driver;
 
             #1 -> drv2mon_next_event; //1ns 딜레이 걸어서 monitor에게 신호 주기
             trans.print("drv");
-            @(posedge fifo_if.clk);
+            //@(posedge fifo_if.clk);
 
             // fifo_if.wr <= 1'b0;
             // fifo_if.rd <= 1'b0;

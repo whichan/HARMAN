@@ -116,8 +116,8 @@ class monitor;
 
     task run();
         forever begin
-            @(posedge fifo_if.clk);
-            //@(drv2mon_next_event); //driver가 신호를 다 실었다고 알려줄 때까지 대기
+            //@(posedge fifo_if.clk);
+            @(drv2mon_next_event); //driver가 신호를 다 실었다고 알려줄 때까지 대기
             trans = new();
             trans.wr = fifo_if.wr;
             trans.rd = fifo_if.rd;

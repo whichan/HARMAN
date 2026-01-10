@@ -1,5 +1,4 @@
 #include "led.h"
-#include "led.h"
 #include "button.h"
 
 void led_main(void);

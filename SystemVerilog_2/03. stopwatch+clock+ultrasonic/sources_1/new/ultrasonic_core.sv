@@ -14,13 +14,14 @@ module ultrasonic_core (
     TRIG,  //TRIG핀 10us유지
     WAIT_ECHO_POS,  //ECHO핀이 High가 될 때까지 대기
     WAIT_ECHO_NEG,  //ECHO핀이 LOW가 되기 전까지 몇us인지 count
-    CALCULATE  //시간을 cm로 변환
+    CALCULATE
   } state_t;
   state_t ultrasonic_state, ultrasonic_state_next;
 
   logic [$clog2(1_500)-1:0] cnt_10us;
-  logic [$clog2(100)-1:0] cnt_1us;
+  logic [$clog2(5800)-1:0] cnt_1us;
   logic [14:0] echo_time_us;  //데이터시트상 400cm가 최대이기 때문
+  logic [11:0] temp_dist;
 
   assign trig = (ultrasonic_state == TRIG);  //TRIG상태일 때만 trig핀으로 출력
 
@@ -33,7 +34,8 @@ module ultrasonic_core (
       cnt_10us         <= 0;
       cnt_1us          <= 0;
       echo_time_us     <= 0;
-      distance_cm      <= 100;
+      distance_cm      <= 0;
+      temp_dist        <= 0;
     end else begin
       ultrasonic_state <= ultrasonic_state_next;
 
@@ -50,19 +52,34 @@ module ultrasonic_core (
         end
 
         WAIT_ECHO_NEG: begin
-          if (cnt_1us == 100 - 1) begin
-            cnt_1us      <= 0;
-            echo_time_us <= echo_time_us + 1;
+          // 에코가 High인 동안 클럭을 세서 1cm 단위로 temp_dist 증가
+          if (cnt_1us == 5800 - 1) begin
+            cnt_1us   <= 0;
+            temp_dist <= temp_dist + 1;
           end else begin
             cnt_1us <= cnt_1us + 1;
           end
         end
 
         CALCULATE: begin
-          // 거리를 계산하여 레지스터에 저장 (IDLE로 가도 유지됨)
-          distance_cm <= (echo_time_us * 34) / 2000;
-          // distance_cm <= 200;
+          distance_cm <= temp_dist;
+          temp_dist   <= 0;
         end
+
+        // WAIT_ECHO_NEG: begin
+        //       if (cnt_1us == 100 - 1) begin
+        //         cnt_1us      <= 0;
+        //         echo_time_us <= echo_time_us + 1;
+        //       end else begin
+        //         cnt_1us <= cnt_1us + 1;
+        //       end
+        //     end
+
+        //     CALCULATE: begin
+        //       // 거리를 계산하여 레지스터에 저장 (IDLE로 가도 유지됨)
+        //       distance_cm <= (echo_time_us * 34) / 2000;
+        //     end
+
       endcase
     end
   end

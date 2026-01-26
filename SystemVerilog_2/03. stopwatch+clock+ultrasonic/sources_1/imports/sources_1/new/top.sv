@@ -101,6 +101,7 @@ module btn_debounce (
   logic [$clog2(FCOUNT)-1:0] counter_100khz;
   logic r_clock_100khz;
 
+  //100khz clk div
   always_ff @(posedge clk or posedge reset) begin
     if (reset) begin
       counter_100khz <= 0;
@@ -132,7 +133,7 @@ module btn_debounce (
   end
 
   // 8input AND Gate
-  assign debounce = &(shift_reg);
+  assign debounce = &(shift_reg);  //shift_reg의 8비트가 모두 1이면 debounce=1
 
 
   logic edge_detect;
@@ -149,5 +150,3 @@ module btn_debounce (
   assign o_btn = debounce & (~edge_detect);
   //reset은 민감하기 때문에 8개까지 동기화를 해주자
 endmodule
-
-

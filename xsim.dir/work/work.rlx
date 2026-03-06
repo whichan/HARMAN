@@ -2,6 +2,10 @@
 2020.2
 Nov 18 2020
 09:47:47
-C:/Xilinx/Vivado/2020.2/data/system_verilog/uvm_1.2/uvm_macros.svh,1605717275,systemVerilog,,d:/project/systemveriog_2/260303_VGA_RGB_Switch/260303_VGA_RGB_Switch.srcs/sources_1/new/Color_Bar.sv,,,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
+C:/Xilinx/Vivado/2020.2/data/system_verilog/uvm_1.2/uvm_macros.svh,1605717275,systemVerilog,,d:/project/systemveriog_2/260304_VGA_Lena/260304_VGA_Lena.srcs/sources_1/new/ImgMemReader.sv,,,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
 d:/project/systemveriog_2/260220_I2C_Protocol/260220_I2C_Protocol.srcs/sources_1/new/I2C_Master.sv,1772523489,systemVerilog,,,,I2C_Master,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
 d:/project/systemveriog_2/260303_VGA_RGB_Switch/260303_VGA_RGB_Switch.srcs/sources_1/new/Color_Bar.sv,1772585823,systemVerilog,,,,Color_Bar,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
+d:/project/systemveriog_2/260304_VGA_Lena/260304_VGA_Lena.srcs/sources_1/imports/new/VGA_Decoder.sv,1772603597,systemVerilog,,,,VGA_Decoder_Top;pclk_gen;pxl_counter;vga_decoder,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
+d:/project/systemveriog_2/260304_VGA_Lena/260304_VGA_Lena.srcs/sources_1/new/ImgMemReader.sv,1772636080,systemVerilog,,,,ImgMemReader;ImgMemReader_upscaler,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
+d:/project/systemveriog_2/260304_VGA_Lena/260304_VGA_Lena.srcs/sources_1/new/VGA_ImgROM.sv,1772633517,systemVerilog,,,,VGA_ImgROM;demux;mux;mux_color,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
+d:/project/systemveriog_2/260304_VGA_Lena/260304_VGA_Lena.srcs/sources_1/new/gray_scale_filter.sv,1772611051,systemVerilog,,,,blue_filter;gray_scale_filter;green_filter;negative_filter;red_filter,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,

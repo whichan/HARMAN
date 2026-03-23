@@ -1,7 +1,0 @@
-0.7
-2020.2
-Nov 18 2020
-09:47:47
-C:/Xilinx/Vivado/2020.2/data/system_verilog/uvm_1.2/uvm_macros.svh,1605717275,systemVerilog,,d:/project/systemveriog_2/260305_VGA_OV7670/260305_VGA_OV7670.srcs/sources_1/imports/sources_1/new/ImgMemReader.sv,,,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
-d:/project/systemveriog_2/260305_VGA_OV7670/260305_VGA_OV7670.srcs/sources_1/imports/sources_1/new/ImgMemReader.sv,1772795665,systemVerilog,,,,ImgMemReader;ImgMemReader_upscaler,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
-d:/project/systemveriog_2/260305_VGA_OV7670/260305_VGA_OV7670.srcs/sources_1/imports/sources_1/new/VGA_ImgROM.sv,1772689627,systemVerilog,,,,VGA_ImgROM;demux;mux;mux_color,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,

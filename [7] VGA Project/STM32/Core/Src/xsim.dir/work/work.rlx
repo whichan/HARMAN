@@ -1,0 +1,9 @@
+0.7
+2020.2
+Nov 18 2020
+09:47:47
+C:/Xilinx/Vivado/2020.2/data/system_verilog/uvm_1.2/uvm_macros.svh,1605717275,systemVerilog,,d:/project/systemveriog_2/VGA_Project/VGA_Project.srcs/sources_1/imports/sources_1/new/VGA_EdgeDetector.sv,,,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
+d:/project/systemveriog_2/VGA_Project/VGA_Project.srcs/sources_1/imports/sources_1/new/VGA_EdgeDetector.sv,1773194414,systemVerilog,,,,VGA_EdgeDetector,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
+d:/project/systemveriog_2/VGA_Project/VGA_Project.srcs/sources_1/imports/sources_1/new/top_VGA_OV7670.sv,1773123506,systemVerilog,,,,top_VGA_OV7670,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
+d:/project/systemveriog_2/VGA_Project/VGA_Project.srcs/sources_1/new/SPI_Master.sv,1772974265,systemVerilog,,,,spi_master,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
+d:/project/systemveriog_2/VGA_Project/VGA_Project.srcs/sources_1/new/spi_send_fsm.sv,1772974321,systemVerilog,,,,spi_send_fsm,,uvm,C:\Xilinx\Vivado\2020.2\data\system_verilog\uvm_1.2,,,,,
